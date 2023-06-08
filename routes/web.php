@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Test\TestController;
 
 require(base_path('routes/app/web.php'));
 require(base_path('routes/app/admin.php'));
@@ -36,3 +38,6 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+// Route::post('test/precognition/post', [TestController::class, 'precognitionPost'])
+//     ->name('precognition.post')->middleware(HandlePrecognitiveRequests::class);

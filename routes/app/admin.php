@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DashboardController;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 
 Route::get('api/users', [DashboardController::class, 'getUsers']);
 
@@ -20,6 +21,7 @@ Route::namespace('admin')->prefix('admin')->group(function () {
 
         Route::get('user/{id}', [DashboardController::class, 'user'])->name('admin.user');
 
-        Route::post('user/update/{id}', [DashboardController::class, 'userUpdate'])->name('admin.user.update');
+        Route::post('user/update/{id}', [DashboardController::class, 'userUpdate'])
+            ->name('admin.user.update')->middleware(HandlePrecognitiveRequests::class);;
     });
 });
