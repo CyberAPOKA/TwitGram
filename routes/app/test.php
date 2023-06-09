@@ -10,4 +10,6 @@ Route::prefix('test')->group(function () {
     Route::get('precognition', [TestController::class, 'precognition'])->name('precognition');
     Route::post('precognition/post', [TestController::class, 'precognitionPost'])
         ->name('precognition.post')->middleware(HandlePrecognitiveRequests::class);
+
+    Route::get('nasa-api', [TestController::class, 'nasaApi'])->name('nasa.api');
 });
