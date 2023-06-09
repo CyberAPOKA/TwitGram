@@ -2,4 +2,11 @@
 
 use App\Http\Controllers\Web\HomeController;
 
-Route::get('/', [HomeController::class, 'index'])->name('index')->middleware();
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('index');
+});
