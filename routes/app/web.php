@@ -9,4 +9,6 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('index');
+
+    Route::get('/{user}', [HomeController::class, 'user'])->name('user');
 });

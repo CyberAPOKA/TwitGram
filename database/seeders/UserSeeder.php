@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
 
         foreach (range(1, 10) as $index) {
             DB::table('users')->insert([
-                'slug' => $faker->unique()->slug(),
+                'user' => $faker->unique()->slug(),
                 'email' => $faker->unique()->email,
                 'password'      => Hash::make('secret'),
                 'created_at' => now(),
