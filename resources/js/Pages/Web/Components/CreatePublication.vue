@@ -478,28 +478,6 @@ const onPhotosSelected = (key, event) => {
   }
 };
 
-// const onPhotosSelected = (key, event) => {
-//   const files = event.target.files;
-//   if (files.length > 0) {
-//     if (files.length > 10) {
-//       alert("Por favor, selecione no máximo 10 arquivos.");
-//       return;
-//     }
-//     for (let i = 0; i < files.length; i++) {
-//       const file = files[i];
-//       if (file.size > 3 * 1024 * 1024) {
-//         alert(`O arquivo ${file.name} excede o tamanho máximo de 3MB.`);
-//         return;
-//       }
-//       //   if (file.type !== "application/pdf") {
-//       //     alert(`O arquivo ${file.name} não é um arquivo PDF válido.`);
-//       //     return;
-//       //   }
-//     }
-//     form[key] = files;
-//   }
-// };
-
 const form = useForm({
   _method: "POST",
   title: "",
