@@ -11,4 +11,5 @@ Route::middleware([
     Route::get('/', [HomeController::class, 'index'])->name('index');
 
     Route::get('/{user}', [HomeController::class, 'user'])->name('user');
+    Route::post('/create-publication', [HomeController::class, 'createPublication'])->name('create.publication');
 });
