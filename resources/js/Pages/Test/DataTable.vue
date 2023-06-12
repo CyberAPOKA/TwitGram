@@ -10,10 +10,29 @@
       >
       </v-data-table>
     </v-container>
+    <br />
+
+    <v-carousel>
+      <v-carousel-item
+        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+        cover
+      ></v-carousel-item>
+
+      <v-carousel-item
+        src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg"
+        cover
+      ></v-carousel-item>
+
+      <v-carousel-item
+        src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+        cover
+      ></v-carousel-item>
+    </v-carousel>
   </v-app>
 </template>
 
 <script setup>
+import "@mdi/font/css/materialdesignicons.min.css";
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 const headers = [
@@ -35,12 +54,3 @@ const desserts = [
 
 let itemsPerPage = 5;
 </script>
-
-<style>
-.v-btn--icon[aria-label="First page"],
-.v-btn--icon[aria-label="Previous page"],
-.v-btn--icon[aria-label="Next page"],
-.v-btn--icon[aria-label="Last page"] {
-  background-color: black;
-}
-</style>

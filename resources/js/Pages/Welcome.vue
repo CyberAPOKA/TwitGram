@@ -10,6 +10,7 @@
 <script setup>
 import Sidebar from "@/Pages/Web/Layouts/Sidebar.vue";
 import CreatePublication from "@/Pages/Web/Components/CreatePublication.vue";
+import "@mdi/font/css/materialdesignicons.min.css";
 
 const props = defineProps({
   user: Object,

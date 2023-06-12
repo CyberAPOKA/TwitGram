@@ -23,20 +23,17 @@ class HomeController extends Controller
 
     public function user($user)
     {
-        $user = User::where('user', $user)->with('publications.photos')->first();
+        $authUser = Auth::user()->load('publications.photos');
 
-        if (!$user) {
-            abort(404);
+        if ($authUser && $authUser->user === $user) {
+            $user = $authUser;
+        } else {
+            $user = User::where('user', $user)->with('publications.photos')->first();
+
+            if (!$user) {
+                abort(404);
+            }
         }
-
-        // if (!$user) {
-
-        //     $message = "Usuário não existe!";
-
-        //     return Inertia::render('User', [
-        //         'message' => $message
-        //     ]);
-        // }
 
         return Inertia::render('User', [
             'user' => $user
@@ -47,20 +44,17 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-
         $publication = Publication::create([
             'user_id' => $user->id,
             'title' => $request->input('title')
         ]);
 
-
         if ($request->hasFile('photos')) {
             $photos = $request->file('photos');
 
-
             foreach ($photos as $photo) {
-                $photoPath = $photo->store('photos');
-
+                $photoPath = $photo->store('public/photos/' . $user->user . '/publication/' . $publication->id);
+                $photoPath = str_replace('public/', '', $photoPath);
                 Photo::create([
                     'publication_id' => $publication->id,
                     'photo_path' => $photoPath

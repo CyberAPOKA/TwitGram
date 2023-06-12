@@ -38,8 +38,25 @@
               data-modal-target="goBackModal"
               data-modal-toggle="goBackModal"
               type="button"
-              v-show="selectedImages.length != 0"
+              v-show="step == 1 && selectedImages.length != 0"
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                />
+              </svg>
+            </button>
+
+            <button type="button" v-show="step == 2" @click="step--">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -419,12 +436,64 @@
             </div>
           </div>
           <div v-else v-if="step == 1">
-            <div v-if="selectedImages != null || selectedImages.length != 0">
+            <!-- <div v-if="selectedImages != null || selectedImages.length != 0">
               <img v-for="image in selectedImages" :key="image" :src="image" alt="" />
-            </div>
+            </div> -->
+
+            <v-carousel>
+              <v-carousel-item
+                v-for="(image, index) in selectedImages"
+                :key="image"
+                :src="image"
+                cover
+                @click="selectImage(index)"
+              >
+                <button class="absolute top-3 right-3" @click="removeImage(index)">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-12 h-12 text-red-600"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
+                    />
+                  </svg>
+                </button>
+              </v-carousel-item>
+            </v-carousel>
+
+            <!-- <div>
+              <div
+                class="carousel-container"
+                :class="{ 'carousel-slide': isCarouselActive }"
+              >
+                <div class="carousel-inner">
+                  <img v-for="image in selectedImages" :key="image" :src="image" alt="" />
+                </div>
+              </div>
+              <button @click="toggleCarousel">Toggle Carousel</button>
+            </div> -->
           </div>
           <div e v-if="step == 2">
-            <input type="text" v-model="form.title" />
+            <div class="container mx-auto p-6">
+              <textarea
+                id="message"
+                rows="4"
+                class="block p-6 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Escreva uma legenda..."
+                v-model="form.title"
+                maxlength="2200"
+              >
+              </textarea>
+              <div class="flex justify-end">
+                <span>{{ characterCount }} / 2200</span>
+              </div>
+            </div>
           </div>
           <!-- Modal footer -->
         </form>
@@ -434,16 +503,47 @@
 </template>
 <script setup>
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
+import "@mdi/font/css/materialdesignicons.min.css";
 
 const step = ref(1);
 const selectedImages = ref([]);
+const selectedImageIndex = ref(-1);
+
+const removeImage = (index) => {
+  // Verificar se o índice é igual ao selectedImageIndex
+  if (index === selectedImageIndex.value) {
+    // Remover a imagem do array
+    selectedImages.value.splice(index, 1);
+
+    if (selectedImages.value.length > 0) {
+      // Se ainda houver imagens restantes
+      if (index >= selectedImages.value.length) {
+        // Se a imagem removida for a última, voltar para a imagem anterior
+        selectedImageIndex.value = selectedImages.value.length - 1;
+      }
+    } else {
+      // Se não houver mais imagens, redefinir selectedImageIndex para -1
+      selectedImageIndex.value = -1;
+    }
+  } else {
+    // Manter o índice atual se não for a imagem atualmente exibida
+    selectedImages.value.splice(index, 1);
+    if (index < selectedImageIndex.value) {
+      // Ajustar o selectedImageIndex se a imagem removida estiver antes da imagem selecionada atualmente
+      selectedImageIndex.value--;
+    }
+  }
+};
+
+const selectImage = (index) => {
+  // Verificar se o índice selecionado é diferente do selectedImageIndex atual
+  if (index !== selectedImageIndex.value) {
+    selectedImageIndex.value = index;
+  }
+};
 
 const showModal = ref(false);
-
-const openModal = () => {
-  showModal.value = true;
-};
 
 const confirmGoBack = () => {
   goBack();
@@ -453,6 +553,14 @@ const confirmGoBack = () => {
 const goBack = () => {
   selectedImages.value = [];
   //   step.value--;
+};
+
+const characterCount = computed(() => {
+  return form.title.length;
+});
+
+const updateCharacterCount = () => {
+  // O método é chamado a cada mudança no texto do textarea
 };
 
 const onPhotosSelected = (key, event) => {
@@ -476,6 +584,7 @@ const onPhotosSelected = (key, event) => {
       form[key] = files;
     }
   }
+  selectedImageIndex.value = -1;
 };
 
 const form = useForm({

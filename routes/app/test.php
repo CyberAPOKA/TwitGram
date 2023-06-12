@@ -12,4 +12,6 @@ Route::prefix('test')->group(function () {
         ->name('precognition.post')->middleware(HandlePrecognitiveRequests::class);
 
     Route::get('nasa-api', [TestController::class, 'nasaApi'])->name('nasa.api');
+
+    Route::get('carousel', [TestController::class, 'carousel'])->name('carousel');
 });

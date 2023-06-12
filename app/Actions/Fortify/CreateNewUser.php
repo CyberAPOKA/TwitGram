@@ -34,14 +34,16 @@ class CreateNewUser implements CreatesNewUsers
                 $user = User::create([
                     'email' => $input['email'],
                     'user' => $input['user'],
+                    'name' => $input['name'],
                     'password' => Hash::make($input['password']),
                 ]),
-                UserProfile::create([
-                    'user_id' => $user->id,
-                    'name' => $input['name'],
-                ]),
+
                 function (User $user) {
                     $this->createTeam($user);
+                    UserProfile::create([
+                        'user_id' => $user->id,
+
+                    ]);
                 }
             );
         });

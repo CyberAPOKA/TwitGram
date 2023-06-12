@@ -21,7 +21,7 @@ class UserProfileSeeder extends Seeder
         foreach ($users as $user) {
             DB::table('user_profiles')->insert([
                 'user_id'       => $user->id,
-                'name'          => $faker->name,
+                // 'name'          => $faker->name,
                 'created_at'    => now(),
                 'updated_at'    => now()
             ]);

@@ -85,4 +85,9 @@ class TestController extends Controller
             ]);
         }
     }
+
+    public function carousel()
+    {
+        return Inertia::render('Test/Carousel');
+    }
 }

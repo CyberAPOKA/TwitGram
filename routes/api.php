@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Web\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,3 +23,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('admin')->group(function () {
     Route::get('users', [DashboardController::class, 'getUsers']);
 });
+Route::get('/user/{slug}', [UserController::class, 'show']);
