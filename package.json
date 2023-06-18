@@ -27,6 +27,7 @@
         "laravel-precognition-vue": "^0.3.1",
         "laravel-precognition-vue-inertia": "^0.3.1",
         "laravel-vue-pagination": "^4.1.0",
+        "moment": "^2.29.4",
         "swiper": "^9.3.2",
         "vee-validate": "^4.8.5",
         "vue-image-zoomer": "^2.2.3",

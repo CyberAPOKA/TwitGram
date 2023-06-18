@@ -8,6 +8,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 
 class TestController extends Controller
 {
@@ -28,7 +29,11 @@ class TestController extends Controller
 
     public function precognition()
     {
-        return Inertia::render('Test/Precognition');
+        $posts = Post::all();
+
+        return Inertia::render('Test/Precognition', [
+            'posts' => $posts
+        ]);
     }
 
     public function precognitionPost(TestRequest $request)
