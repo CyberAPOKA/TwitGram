@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Events\PublicationEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Publication;
 use Illuminate\Http\Request;
@@ -12,12 +13,21 @@ use App\Models\Photo;
 
 class HomeController extends Controller
 {
+
+    public function dashboard()
+    {
+        return Inertia::render('Dashboard');
+    }
+
     public function index()
     {
         $user = Auth::user()->load('profile', 'publications');
 
+        $publications = Publication::with('user', 'photos')->get();
+
         return Inertia::render('Welcome', [
-            'user' => $user
+            'user' => $user,
+            'publications' => $publications
         ]);
     }
 
@@ -61,5 +71,9 @@ class HomeController extends Controller
                 ]);
             }
         }
+
+        event(new PublicationEvent($publication));
+
+        return redirect()->back();
     }
 }

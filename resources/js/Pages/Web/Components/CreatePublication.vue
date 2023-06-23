@@ -118,14 +118,15 @@
             </div>
 
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-              Criar nova publicação {{ step }}
+              Criar nova publicação
             </h3>
+
             <button @click="step++" type="button" v-if="step == 1">Avançar</button>
             <button
               data-modal-hide="modalCreatePublication"
               type="submit"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              v-else
+              v-show="step == 2"
             >
               Enviar
             </button>
@@ -559,10 +560,6 @@ const characterCount = computed(() => {
   return form.title.length;
 });
 
-const updateCharacterCount = () => {
-  // O método é chamado a cada mudança no texto do textarea
-};
-
 const onPhotosSelected = (key, event) => {
   const files = event.target.files;
   if (files.length > 0) {
@@ -597,6 +594,19 @@ const submit = () => {
   form.post(route("create.publication"), {
     headers: {
       "Content-Type": "multipart/form-data",
+    },
+    onSuccess: () => {
+      step.value = 1;
+      selectedImages.value.value = [];
+      selectedImages.value = [];
+      // form.reset();
+
+      // alert("Sucesso");
+    },
+    onError: () => {
+      step.value = 1;
+      form.photos.value = null;
+      // alert("Erro");
     },
   });
 };

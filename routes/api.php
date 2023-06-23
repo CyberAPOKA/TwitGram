@@ -23,4 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('admin')->group(function () {
     Route::get('users', [DashboardController::class, 'getUsers']);
 });
+
 Route::get('/user/{slug}', [UserController::class, 'show']);

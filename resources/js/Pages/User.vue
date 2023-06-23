@@ -4,16 +4,16 @@
     <div class="grid md:grid-cols-12 px-24 pt-4">
       <div class="md:col-span-3">
         <img
-          class="w-36 h-36 mb-3 rounded-full shadow-lg"
-          src="/assets/musk.png"
-          :alt="user.user"
+          class="w-36 h-36 mb-3 rounded-full shadow-lg object-cover"
+          :src="user.profile_photo_url"
+          :alt="user.name"
         />
       </div>
       <div class="flex flex-col md:col-span-6 px-4 gap-4">
         <div class="flex flex-row justify-between">
           <p>{{ user.user }}</p>
           <button>Editar perfil</button>
-          <div >
+          <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
