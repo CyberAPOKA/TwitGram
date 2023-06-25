@@ -86,7 +86,7 @@
               class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
               v-show="selectedImages.length != 0"
             >
-              <div class="relative w-full max-w-2xl max-h-full">
+              <div class="relative w-full max-w-2xl max-h-full px-6">
                 <!-- Modal content -->
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                   <!-- Modal header -->
@@ -100,24 +100,28 @@
                   </div>
                   <!-- Modal body -->
                   <div
-                    class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600"
+                    class="text-center cursor-pointer p-6 space-x-2 border-gray-200 rounded-b dark:border-gray-600"
+                    @click="confirmGoBack"
+                    data-modal-hide="goBackModal"
+                    type="button"
                   >
-                    <button
+                    <!-- <button
                       data-modal-hide="goBackModal"
                       type="button"
                       class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       @click="confirmGoBack"
                     >
                       Confirmar
-                    </button>
-                    <button
-                      data-modal-hide="goBackModal"
-                      type="button"
-                      class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                      @click="showModal = false"
-                    >
-                      Cancelar
-                    </button>
+                    </button> -->
+                    <p class="text-red-600 font-bold hover:">Descartar</p>
+                  </div>
+                  <div
+                    class="text-center cursor-pointer p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600"
+                    data-modal-hide="goBackModal"
+                    type="button"
+                    @click="showModal = false"
+                  >
+                    <p>Cancelar</p>
                   </div>
                 </div>
               </div>
@@ -131,6 +135,7 @@
               @click="step++"
               type="button"
               v-show="step == 1 && selectedImages.length != 0"
+              class="font-bold text-blue-600"
             >
               Avançar
             </button>
@@ -462,8 +467,13 @@
                     ? 'padding-right: 5rem; padding-left: 5rem;'
                     : 'padding-top: 5rem; padding-bottom: 5rem;'
                 "
-                :style="getCarouselItemStyle"
               >
+                <Cropper v-bind:original="image" :ref="cropperRef" />
+                <img
+                  :src="croppedImages[index]"
+                  alt="Cropped Image"
+                  v-if="croppedImages[index] !== undefined"
+                />
                 <button class="absolute top-3 right-3" @click="removeImage(index)">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -483,7 +493,7 @@
               </v-carousel-item>
             </v-carousel>
 
-            <button
+            <!-- <button
               v-show="step == 1 && selectedImages.length != 0"
               data-popover-target="popover-default"
               type="button"
@@ -534,18 +544,9 @@
                     >16:9</label
                   >
                 </div>
-                <div class="flex items-center">
-                  <input
-                    type="range"
-                    min="1"
-                    max="100"
-                    v-model="zoomLevel"
-                    @input="updateZoom"
-                  />
-                </div>
               </div>
               <div data-popper-arrow></div>
-            </div>
+            </div> -->
           </div>
           <div e v-if="step == 2">
             <div class="container mx-auto p-6">
@@ -581,6 +582,9 @@ import { initFlowbite } from "flowbite";
 onMounted(() => {
   initFlowbite();
 });
+
+const cropperRef = ref(null);
+const croppedImages = ref({});
 
 const step = ref(1);
 const selectedImages = ref([]);
@@ -618,11 +622,17 @@ const removeImage = (index) => {
   }
 };
 
+// const selectImage = (index) => {
+//   if (index !== selectedImageIndex.value) {
+//     selectedImageIndex.value = index;
+//   }
+// };
+
 const selectImage = (index) => {
-  // Verificar se o índice selecionado é diferente do selectedImageIndex atual
-  if (index !== selectedImageIndex.value) {
-    selectedImageIndex.value = index;
-  }
+  const selectedImage = selectedImages[index];
+  cropperRef.value.crop(selectedImage).then((croppedImage) => {
+    croppedImages.value = { ...croppedImages.value, [index]: croppedImage };
+  });
 };
 
 const showModal = ref(false);
