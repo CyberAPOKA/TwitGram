@@ -23,6 +23,7 @@ class AdminController extends Controller
             return redirect()->back()->with('danger', 'E-mail ou senha inválida.');
         }
     }
+    
     public function logout()
     {
         Auth::guard('admin')->logout();

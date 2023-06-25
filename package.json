@@ -32,6 +32,7 @@
         "moment": "^2.29.4",
         "swiper": "^9.3.2",
         "vee-validate": "^4.8.5",
+        "vue-advanced-cropper": "^2.8.8",
         "vue-image-zoomer": "^2.2.3",
         "vue-toast-notification": "^3.1.1",
         "vue3-carousel": "^0.3.1",

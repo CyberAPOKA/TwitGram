@@ -2,7 +2,6 @@
   <Sidebar></Sidebar>
   <Rightbar :user="user"></Rightbar>
   <div class="p-4 sm:ml-64 sm:mr-96">
-    {{ user.user }}
     <CreatePublication></CreatePublication>
 
     <div class="p-6">

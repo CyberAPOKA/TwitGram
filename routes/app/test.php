@@ -13,4 +13,5 @@ Route::prefix('test')->group(function () {
 
     Route::get('nasa-api', [TestController::class, 'nasaApi'])->name('nasa.api');
     Route::get('carousel', [TestController::class, 'carousel'])->name('carousel');
+    Route::get('crop', [TestController::class, 'crop'])->name('crop');
 });

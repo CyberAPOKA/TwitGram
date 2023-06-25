@@ -95,4 +95,9 @@ class TestController extends Controller
     {
         return Inertia::render('Test/Carousel');
     }
+
+    public function crop()
+    {
+        return Inertia::render('Test/Crop');
+    }
 }

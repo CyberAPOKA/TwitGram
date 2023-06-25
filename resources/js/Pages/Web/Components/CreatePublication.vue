@@ -30,7 +30,13 @@
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <form @submit.prevent="submit" enctype="multipart/form-data">
           <!-- Modal header -->
-          <div class="flex justify-between p-4 border-b rounded-t dark:border-gray-600">
+          <div
+            class="flex p-4 border-b rounded-t dark:border-gray-600"
+            :class="{
+              'justify-evenly': step === 1 && selectedImages.length == 0,
+              'justify-between': step === 1 && selectedImages.length !== 0,
+            }"
+          >
             <!-- <button v-if="selectedImages.length != 0" @click="step--"> -->
 
             <!-- Modal toggle -->
@@ -121,7 +127,13 @@
               Criar nova publicação
             </h3>
 
-            <button @click="step++" type="button" v-if="step == 1">Avançar</button>
+            <button
+              @click="step++"
+              type="button"
+              v-show="step == 1 && selectedImages.length != 0"
+            >
+              Avançar
+            </button>
             <button
               data-modal-hide="modalCreatePublication"
               type="submit"
@@ -436,18 +448,21 @@
               </label>
             </div>
           </div>
-          <div v-else v-if="step == 1">
-            <!-- <div v-if="selectedImages != null || selectedImages.length != 0">
-              <img v-for="image in selectedImages" :key="image" :src="image" alt="" />
-            </div> -->
-
-            <v-carousel>
+          <div v-show="step == 1">
+            <v-carousel hide-delimiters v-if="selectedImages.length != 0">
               <v-carousel-item
                 v-for="(image, index) in selectedImages"
                 :key="image"
                 :src="image"
                 cover
                 @click="selectImage(index)"
+                :aspect-ratio="1 / 1"
+                v-bind:style="
+                  selectedSize === '11'
+                    ? 'padding-right: 5rem; padding-left: 5rem;'
+                    : 'padding-top: 5rem; padding-bottom: 5rem;'
+                "
+                :style="getCarouselItemStyle"
               >
                 <button class="absolute top-3 right-3" @click="removeImage(index)">
                   <svg
@@ -468,17 +483,69 @@
               </v-carousel-item>
             </v-carousel>
 
-            <!-- <div>
+            <button
+              v-show="step == 1 && selectedImages.length != 0"
+              data-popover-target="popover-default"
+              type="button"
+              class="absolute -mt-12 ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Default popover
+            </button>
+            <div
+              data-popover
+              id="popover-default"
+              role="tooltip"
+              class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
+            >
               <div
-                class="carousel-container"
-                :class="{ 'carousel-slide': isCarouselActive }"
+                class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700"
               >
-                <div class="carousel-inner">
-                  <img v-for="image in selectedImages" :key="image" :src="image" alt="" />
+                <h3 class="font-semibold text-gray-900 dark:text-white">Popover title</h3>
+              </div>
+              <div class="px-3 py-2">
+                <div class="flex items-center mb-4">
+                  <input
+                    id="11"
+                    type="radio"
+                    value="11"
+                    name="image_size"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    @change="handleSizeChange('11')"
+                  />
+                  <label
+                    for="11"
+                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >1:1</label
+                  >
+                </div>
+                <div class="flex items-center">
+                  <input
+                    checked
+                    id="169"
+                    type="radio"
+                    value="169"
+                    name="image_size"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    @change="handleSizeChange('169')"
+                  />
+                  <label
+                    for="169"
+                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >16:9</label
+                  >
+                </div>
+                <div class="flex items-center">
+                  <input
+                    type="range"
+                    min="1"
+                    max="100"
+                    v-model="zoomLevel"
+                    @input="updateZoom"
+                  />
                 </div>
               </div>
-              <button @click="toggleCarousel">Toggle Carousel</button>
-            </div> -->
+              <div data-popper-arrow></div>
+            </div>
           </div>
           <div e v-if="step == 2">
             <div class="container mx-auto p-6">
@@ -505,11 +572,25 @@
 <script setup>
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import { ref, watch, computed } from "vue";
+import { Cropper } from "vue-advanced-cropper";
 import "@mdi/font/css/materialdesignicons.min.css";
+import "vue-advanced-cropper/dist/style.css";
+import { onMounted } from "vue";
+import { initFlowbite } from "flowbite";
+
+onMounted(() => {
+  initFlowbite();
+});
 
 const step = ref(1);
 const selectedImages = ref([]);
 const selectedImageIndex = ref(-1);
+
+const selectedSize = ref("169");
+
+function handleSizeChange(size) {
+  selectedSize.value = size;
+}
 
 const removeImage = (index) => {
   // Verificar se o índice é igual ao selectedImageIndex
@@ -599,15 +680,58 @@ const submit = () => {
       step.value = 1;
       selectedImages.value.value = [];
       selectedImages.value = [];
-      // form.reset();
-
-      // alert("Sucesso");
+      form.reset();
+      alert("Sucesso");
     },
     onError: () => {
       step.value = 1;
       form.photos.value = null;
-      // alert("Erro");
+      form.reset();
+      alert("Erro");
     },
   });
 };
 </script>
+<style>
+.v-carousel__controls {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.v-btn.v-btn--elevated.v-btn--icon.v-theme--light.v-btn--density-default {
+  background-color: rgba(20, 20, 20, 0);
+}
+.v-btn.v-btn--elevated.v-btn--icon.v-theme--light.v-btn--density-default.v-btn--size-default.v-btn--variant-elevated:hover {
+  background-color: white;
+}
+.v-btn--icon .v-icon {
+  --v-icon-size-multiplier: 2;
+  color: white;
+}
+
+.mdi-circle.mdi.v-icon.notranslate.v-theme--light.v-icon--size-default {
+  --v-icon-size-multiplier: 1;
+  color: #1a1de6;
+}
+.v-btn--icon.v-btn--density-default {
+  width: calc(var(--v-btn-height) + 12px);
+  height: calc(var(--v-btn-height) + 12px);
+}
+
+.v-btn--variant-text .v-btn__overlay {
+  /* background-color: rgba(0, 0, 0, 0); */
+  background-color: #252424;
+}
+
+/* css para 16:9 */
+.v-img__img.v-img__img--cover {
+  /* padding-top: 5rem;
+  padding-bottom: 5rem; */
+  aspect-ratio: 1/1;
+}
+
+/* css para 1:1 */
+.v-img__img.v-img__img--cover {
+  /* padding-right: 5rem;
+  padding-left: 5rem; */
+}
+</style>
